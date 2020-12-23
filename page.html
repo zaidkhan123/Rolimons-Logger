@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="msapplication-TileColor" content="#242021">
+    <meta name="theme-color" content="#242021">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.rolimons.com/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://www.rolimons.com/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.rolimons.com/favicon-16x16.png">
+    <link rel="manifest" href="https://www.rolimons.com/site.webmanifest">
+    <link rel="mask-icon" href="https://www.rolimons.com/safari-pinned-tab.svg" color="#5bbad5">
+    <title>Item Status | Rolimon's</title>
+    <meta name="description" content="Rolimon's Item Status searches a Roblox limited item with its UAID or serial identifier to see the previous owners to determine if the item is poisoned or clean.">
+    <meta property="og:title" content="Item Status">
+    <meta property="og:type" content="game">
+    <meta property="og:url" content="https://www.rolimons.com/itemstatus">
+    <meta property="og:image" content="https://media.discordapp.net/attachments/722018268948332666/747297941072642048/unknown.png">
+    <meta property="og:site_name" content="Rolimon's">
+    <meta property="og:description" content="View the status of a Roblox limited item.">
+    <link rel="stylesheet" href="https://www.rolimons.com/css/custom.css">
+    <link rel="stylesheet" href="https://www.rolimons.com/css/site.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@2.2.0/build/jwt-decode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8.14.0/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mixitup/3.3.1/mixitup.min.js"></script>
+  </head>
+  <body></body>
+  <div class="header">
+    <style>
+      /* navbar flex behavior */
+      @media screen and (max-width: 767px) {
+        .main-navbar-ul {
+        }
+      }
+      @media screen and (min-width: 768px) {
+        .main-navbar-ul {
+          flex: 1;
+          margin: auto !important;
+          display: flex;
+          justify-content: space-evenly;
+        }
+      }
+      
+      /* main items */
+      .navbar-main-item-outer {
+        text-align: center;
+        min-width: 72px;
+      }
+      .navbar-main-item-title {
+        font-size: 12px;
+      }
+      
+      .navbar-main-item-sm-outer {
+        text-align: center;
+        min-width: 50px;
+      }
+      .navbar-main-item-sm-title {
+        font-size: 10px;
+        color: #aaa;
+      }
+      
+      /* dropdown items */
+      .navbar-dropdown-item-sm-title {
+        font-size: 12px;
+        color: #aaa;
+      }
+      
+      .dropdown-toggle::after {
+        display: none;
+      }
+      
+      /* make dropdowns open on hover */
+      .dropdown:hover > .dropdown-menu {
+        display: block;
+      }
+      .dropdown > .dropdown-toggle:active {
+        /* Without this, clicking will make it sticky */
+        pointer-events: none;
+      }
+      
+      
+    </style>
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary px-2" style="text-align: center;"><a class="navbar-brand d-block d-md-none ml-2" href="https://www-rolimons.com/" data-toggle="tooltip" data-placement="bottom" title="Rolimon's"><img src="https://www-rolimons.com/images/logo-icon-blue.svg" width="38" height="38" alt="Logo"></a>
+      <button class="navbar-toggler mr-1 my-1" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent" style="max-width: 1200px; margin:auto;">
+        <ul class="navbar-nav main-navbar-ul d-none d-md-flex">
+          <div class="nav-item navbar-main-item-outer align-self-center"><a class="navbar-brand p-0" href="https://www.rolimons.com/" data-toggle="tooltip" data-placement="bottom" title="Rolimon's"><img src="https://www-rolimons.com/images/logo-icon-blue.svg" width="43" height="43" alt="Logo"></a></div>
+          <div class="nav-item navbar-main-item-outer dropdown">
+            <div class="nav-link dropdown-toggle" id="navbarTradingDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 7px; padding-bottom: 7px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="2.25em" height="2.25em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M21 8.998l-3.99-4v3H10v2h7.01v3m-10.02-2l-3.99 4 3.99 4v-3H14v-2H6.99v-3z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-title text-truncate">Trading</div>
+            </div>
+            <div class="dropdown-menu border-0 rounded-0 p-0" aria-labelledby="navbarTradingDropdown" style="margin-top: 0px; background-color: #35393e;"><a class="nav-link text-nowrap" href="https://www.rolimons.com/trades" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20"><path d="M10.44 3.02l1.82-1.82l6.36 6.35l-1.83 1.82a2.731 2.731 0 0 0-3.41.36l-.75.75c-.92.93-1.04 2.35-.35 3.41l-1.83 1.82l-2.41-2.41l-2.8 2.79c-.42.42-3.38 2.71-3.8 2.29s1.86-3.39 2.28-3.81l2.79-2.79L4.1 9.36l1.83-1.82c1.05.69 2.48.57 3.4-.36l.75-.75c.93-.92 1.05-2.35.36-3.41z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Trade Ads</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/recent" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M18.999 7.997L15 12.002h2.997a6.003 6.003 0 0 1-5.995 5.995A5.894 5.894 0 0 1 9.2 17.3l-1.46 1.46A7.93 7.93 0 0 0 12.002 20 7.995 7.995 0 0 0 20 12.002h2.997m-16.996 0a6.005 6.005 0 0 1 6.001-6c1.005 0 1.968.248 2.798.697l1.46-1.46a7.924 7.924 0 0 0-4.258-1.24A7.999 7.999 0 0 0 4 12.002H1l3.999 4 3.999-4" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Value Changes</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/catalog" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M16 19.998h4v-4h-4m0-2h4v-4h-4m-6-2h4v-4h-4m6 4h4v-4h-4m-6 10h4v-4h-4m-6 4h4v-4H4m0 10h4v-4H4m6 4h4v-4h-4m-6-8h4v-4H4v4z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Item Catalog</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/tradecalculator" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v4h10V4H7zm0 6v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2zm-8 4v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2zm-8 4v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Trade Calculator</span></a><a class="nav-link text-nowrap" href="https://www-rolimons.com/itemstatus" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" width="1.85em" height="1.85em"viewBox="0 0 90.77 101.86"><g id="Layer_2" data-name="Layer 2"><g id="Layer_28" data-name="Layer 28"><g id="Layer_2-2" data-name="Layer 2"><g id="Layer_27" data-name="Layer 27"><path d="M2.77,58,2.11,73.74A12.48,12.48,0,0,0,14,86.73h.52A12.46,12.46,0,0,0,27,74.3c0-.33,0-.66,0-1L25.82,58" style="fill:#fff"/><path d="M88.07,29.05C81.66-27.38,62.12,15.79,62.12,15.79H38.53c-22.84-42-24.27,16.46-24.27,16.46V35h5.27c19.75-.62,9.71,20.79,9.71,20.79l1.14,9.9c7.1,9.69,38.77,6.61,47.56,2.56C98.82,58.66,87.87,31.46,88.07,29.05ZM31.44,34.39a2.24,2.24,0,0,1-1.65,0l-.55-.22.24-.12c13.16-6.45,17.19,6.28,17.19,6.28a2.2,2.2,0,0,1-1.93-1.16C43.38,36.7,39.4,31.27,31.44,34.39ZM58.11,55.72c-6.61,9.61-11.88,1.71-12.91,0-2.72.52-6.41-.21-11.35-3.68l.58-.17a2.16,2.16,0,0,1,1.72.24c2.45,1.53,10.16,5.56,13.91-1.44A2.53,2.53,0,0,1,50.6,50c-6.31-4.57-3.12-4.38-3.12-4.38h8.15c3.13,0-1.26,3.1-3.27,4.41a2.11,2.11,0,0,1,.49.59c3.75,7,11.46,3,13.91,1.44a2.11,2.11,0,0,1,1.71-.24l.58.17C64.36,55.28,60.79,56.1,58.11,55.72ZM72.6,34.41a2.24,2.24,0,0,1-1.65,0c-8-3.12-12,2.31-13.3,4.8a2.18,2.18,0,0,1-1.93,1.16s4-12.73,17.19-6.28l.24.12Z" style="fill:#fff"/><path d="M84.8,70.16l1.39,6.28a1.21,1.21,0,0,1-.69,1.37c-4.75,2.09-27.5,11-53.56,2.57A1.25,1.25,0,0,1,31.11,79l1-6.13a1.23,1.23,0,0,1,1.37-1.06.86.86,0,0,1,.23.06c5,1.78,23.09,6.81,49.52-2.65a1.22,1.22,0,0,1,1.54.79A.8.8,0,0,1,84.8,70.16Z" style="fill:#fff"/><g id="Layer_2-2-2" data-name="Layer 2-2"><g id="Layer_1-2" data-name="Layer 1-2"><polygon points="60.81 94.16 52.83 83.94 51.62 86.38 51.23 87.14 50.59 88.42 52.26 88.46 54.09 90.79 49.46 90.71 49.46 90.71 47.84 93.92 47.69 94.25 53.63 101.86 51.58 93.98 60.81 94.16" style="fill:#fff"/></g></g><path d="M21.66,38H6.86C3.07,38,0,41.42,0,45.61a7.45,7.45,0,0,0,5.61,7.47V46.41H6.76V53.2h7.15V46.4h1.14v6.8h7V46.41h1.15V53a7.45,7.45,0,0,0,5.33-7.4C28.52,41.42,25.45,38,21.66,38Z" style="fill:#fff"/></g></g></g></g></svg></span><span class="navbar-main-item-title ml-2">Rolimon's Item Status</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/itemtable" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M4 21h15.893c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zm0-2v-5h4v5H4zM14 7v5h-4V7h4zM8 7v5H4V7h4zm2 12v-5h4v5h-4zm6 0v-5h3.894v5H16zm3.893-7H16V7h3.893v5z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Item Table</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/projecteditems" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1024 1024"><path d="M464 720a48 48 0 1 0 96 0a48 48 0 1 0-96 0zm16-304v184c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V416c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8zm475.7 440l-416-720c-6.2-10.7-16.9-16-27.7-16s-21.6 5.3-27.7 16l-416 720C56 877.4 71.4 904 96 904h832c24.6 0 40-26.6 27.7-48zm-783.5-27.9L512 239.9l339.8 588.2H172.2z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Projected Items</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/marketactivity" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 799 658"><path d="M696.033 490h81c24 0 28 14 11 30l-118 119c-10 11-29 11-40 0l-119-119c-16-16-12-30 12-30h81V196c-4-41-38-72-80-72c-43 0-78 33-80 75v296c-3 62-40 117-92 145c-24 12-50 18-79 18s-54-6-78-18c-53-28-91-83-93-146V204h-80c-24 0-29-13-12-29l118-119c11-11 30-11 40 0l119 119c17 16 12 29-12 29h-80v291c2 42 35 76 78 76s79-36 79-79V199c3-63 39-116 92-144c24-12 51-19 80-19s55 7 80 19c51 27 87 79 92 140v295z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Market Activity</span></a></div>
+          </div>
+          <li class="nav-item navbar-main-item-outer dropdown">
+            <div class="nav-link dropdown-toggle" id="navbarPlayersDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 7px; padding-bottom: 7px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="2.25em" height="2.25em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M8 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm8 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-8 8c3.866 0 7 1.343 7 3v3H1v-3c0-1.657 3.134-3 7-3zm8 0c3.866 0 7 1.343 7 3v3h-6v-3c0-1.117-.66-2.15-1.775-2.982L16 13z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-title text-truncate">Players</div>
+            </div>
+            <div class="dropdown-menu border-0 rounded-0 p-0" aria-labelledby="navbarPlayersDropdown" style="margin-top: 0px; background-color: #35393e;"><a class="nav-link text-nowrap" href="https://www.rolimons.com/players" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M8 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm8 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-8 8c3.866 0 7 1.343 7 3v3H1v-3c0-1.657 3.134-3 7-3zm8 0c3.866 0 7 1.343 7 3v3h-6v-3c0-1.117-.66-2.15-1.775-2.982L16 13z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Player Lookup</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/leaderboard" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M2 2v9c0 1 1 2 2 2h2.2c.4 2 1.7 3.7 4.8 4v2.1c-2.2.2-3 1.3-3 2.6v.3h8v-.3c0-1.3-.8-2.4-3-2.6V17c3.1-.3 4.4-2 4.8-4H20c1 0 2-1 2-2V2h-4c-.9 0-2 1-2 2H8c0-1-1.1-2-2-2H2zm2 2h2v7H4V4zm14 0h2v7h-2V4zM8 6h8v5.5c0 1.933-.585 3.5-4 3.5s-4-1.567-4-3.5V6z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Leaderboard</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/rolibadges" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" width="1.85em" height="1.85em"viewBox="0 0 75.28 90.94"><g id="b26fcdc4-7e31-46b7-b3ca-fe3f8f4672c2" data-name="Layer 2"><g id="b8e93f62-a3e0-4741-b945-6b8acf27d707" data-name="Layer 30"><path d="M68.84,0H6.44A6.44,6.44,0,0,0,0,6.44V62.13a6.45,6.45,0,0,0,2.68,5.23L33.84,89.73a6.44,6.44,0,0,0,7.57,0l31.25-23a6.43,6.43,0,0,0,2.62-5.19V6.44A6.44,6.44,0,0,0,68.84,0ZM48.53,72.76,15.48,57V42l15.84-7.55L21.19,29.64l-5.71,2.73v-19L59.81,34.48,28.24,49.53Z" fill="#fff"/></g></g></svg></span><span class="navbar-main-item-title ml-2">RoliBadges</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/halloffame" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M15 14c-2.67 0-8 1.33-8 4v2h16v-2c0-2.67-5.33-4-8-4m0-2a4 4 0 0 0 4-4a4 4 0 0 0-4-4a4 4 0 0 0-4 4a4 4 0 0 0 4 4M5 13.28l2.45 1.49l-.65-2.81L9 10.08l-2.89-.25L5 7.19L3.87 9.83L1 10.08l2.18 1.88l-.68 2.81L5 13.28z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Hall of Fame</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/staff" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M22 4h-8v3h-4V4H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2M8 9a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m4 8H4v-1c0-1.33 2.67-2 4-2s4 .67 4 2v1m8 1h-6v-2h6v2m0-4h-6v-2h6v2m0-4h-6V8h6v2m-7-4h-2V2h2v4z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Staff</span></a></div>
+          </li>
+          <div class="nav-item navbar-main-item-outer dropdown">
+            <div class="nav-link dropdown-toggle" id="navbarGamesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 7px; padding-bottom: 7px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="2.25em" height="2.25em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path d="M483.13 245.38C461.92 149.49 430 98.31 382.65 84.33A107.13 107.13 0 0 0 352 80c-13.71 0-25.65 3.34-38.28 6.88C298.5 91.15 281.21 96 256 96s-42.51-4.84-57.76-9.11C185.6 83.34 173.67 80 160 80a115.74 115.74 0 0 0-31.73 4.32c-47.1 13.92-79 65.08-100.52 161C4.61 348.54 16 413.71 59.69 428.83a56.62 56.62 0 0 0 18.64 3.22c29.93 0 53.93-24.93 70.33-45.34c18.53-23.1 40.22-34.82 107.34-34.82c59.95 0 84.76 8.13 106.19 34.82c13.47 16.78 26.2 28.52 38.9 35.91c16.89 9.82 33.77 12 50.16 6.37c25.82-8.81 40.62-32.1 44-69.24c2.57-28.48-1.39-65.89-12.12-114.37zM208 240h-32v32a16 16 0 0 1-32 0v-32h-32a16 16 0 0 1 0-32h32v-32a16 16 0 0 1 32 0v32h32a16 16 0 0 1 0 32zm84 4a20 20 0 1 1 20-20a20 20 0 0 1-20 20zm44 44a20 20 0 1 1 20-19.95A20 20 0 0 1 336 288zm0-88a20 20 0 1 1 20-20a20 20 0 0 1-20 20zm44 44a20 20 0 1 1 20-20a20 20 0 0 1-20 20z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-title text-truncate">Games</div>
+            </div>
+            <div class="dropdown-menu border-0 rounded-0 p-0" aria-labelledby="navbarGamesDropdown" style="margin-top: 0px; background-color: #35393e;"><a class="nav-link text-nowrap" href="https://www.rolimons.com/games" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M16 19.998h4v-4h-4m0-2h4v-4h-4m-6-2h4v-4h-4m6 4h4v-4h-4m-6 10h4v-4h-4m-6 4h4v-4H4m0 10h4v-4H4m6 4h4v-4h-4m-6-8h4v-4H4v4z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Game Catalog</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/gametable" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M4 21h15.893c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zm0-2v-5h4v5H4zM14 7v5h-4V7h4zM8 7v5H4V7h4zm2 12v-5h4v5h-4zm6 0v-5h3.894v5H16zm3.893-7H16V7h3.893v5z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Game Table</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/promotionrates" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 360 488"><path d="M258 278l-18 16V130h81L182 2L43 130h80v40l-17-12L5 252h51v210h92V252h57l-67-64v-79H82l100-92l100 92h-57v202l-66 59h56v92h92v-92h51z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Promotion Rates</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/requestgame" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zm4 8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 16h8v-2H2v2z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Request Game</span></a></div>
+          </div>
+          <li class="nav-item navbar-main-item-outer"><a class="nav-link" href="https://www.rolimons.com/leaks" style="padding-top: 7px; padding-bottom: 7px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="2.25em" height="2.25em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M11 6h2v7h-2V6zM9 20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5l2-9h4v7a1 1 0 0 1-1 1v6zm1-15H7V3h3v2zm5 15v-6a1 1 0 0 1-1-1V6h4l2 9v5a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1zM14 5V3h3v2h-3z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-title text-nowrap">Leaks</div></a></li>
+          <li class="nav-item navbar-main-item-outer"><a class="nav-link" href="https://www.rolimons.com/deals" style="padding-top: 7px; padding-bottom: 7px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="2.25em" height="2.25em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M5.499 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm11.91 2.58c.365.362.59.864.59 1.42 0 .551-.223 1.05-.585 1.413l-5 5a1.999 1.999 0 0 1-2.83 0l-6.997-6.998A1.994 1.994 0 0 1 1.999 11V6a2 2 0 0 1 2-2h5c.553 0 1.053.223 1.415.585l6.996 6.996zm-3.873-5.874l1-1 6.875 6.875c.364.362.589.864.589 1.419 0 .552-.223 1.051-.585 1.414l-5.38 5.38-1-1L20.75 13l-7.214-7.294z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-title text-nowrap">Deals</div></a></li>
+          <li class="nav-item navbar-main-item-outer" style="cursor: pointer;"><a class="nav-link" onclick="show_global_search_modal();" style="padding-top: 7px; padding-bottom: 7px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="2.25em" height="2.25em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path d="M464 428L339.92 303.9a160.48 160.48 0 0 0 30.72-94.58C370.64 120.37 298.27 48 209.32 48S48 120.37 48 209.32s72.37 161.32 161.32 161.32a160.48 160.48 0 0 0 94.58-30.72L428 464zM209.32 319.69a110.38 110.38 0 1 1 110.37-110.37a110.5 110.5 0 0 1-110.37 110.37z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-title text-nowrap">Search</div></a></li>
+          <li class="nav-item navbar-main-item-outer dropdown" style="max-width: 72px;">
+            <div class="nav-link dropdown-toggle" id="navbarPlayerDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 7px; padding-bottom: 7px;">
+              <div id="navbar_player_menu_pfp_desktop"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="2.25em" height="2.25em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-title text-truncate" id="navbar_player_menu_player_name_desktop">Account</div>
+            </div>
+            <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="navbarPlayerDropdown" style="margin-top: 0px; background-color: #35393e;"><a class="nav-link text-nowrap" id="navbar_player_menu_verify_desktop" href="https://www.rolimons.com/verify" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1024 1024"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448s448-200.6 448-448S759.4 64 512 64zm193.5 301.7l-210.6 292a31.8 31.8 0 0 1-51.7 0L318.5 484.9c-3.8-5.3 0-12.7 6.5-12.7h46.9c10.2 0 19.9 4.9 25.9 13.3l71.2 98.8l157.2-218c6-8.3 15.6-13.3 25.9-13.3H699c6.5 0 10.3 7.4 6.5 12.7z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Verify Your Account</span></a><a class="nav-link text-nowrap d-none" id="navbar_player_menu_profile_desktop" href="#" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">My Profile</span></a><a class="nav-link text-nowrap d-none" id="navbar_player_menu_create_trade_ad_desktop" href="#" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20"><path d="M10.44 3.02l1.82-1.82l6.36 6.35l-1.83 1.82a2.731 2.731 0 0 0-3.41.36l-.75.75c-.92.93-1.04 2.35-.35 3.41l-1.83 1.82l-2.41-2.41l-2.8 2.79c-.42.42-3.38 2.71-3.8 2.29s1.86-3.39 2.28-3.81l2.79-2.79L4.1 9.36l1.83-1.82c1.05.69 2.48.57 3.4-.36l.75-.75c.93-.92 1.05-2.35.36-3.41z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Create Trade Ad</span></a><a class="nav-link text-nowrap d-none" id="navbar_player_menu_trade_settings_desktop" href="#" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94c0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6s-1.62 3.6-3.6 3.6z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">My Trade Settings</span></a>
+              <div class="dropdown-divider d-block" id="navbar_player_menu_logout_divider_desktop"></div><a class="nav-link text-nowrap d-none" id="navbar_player_menu_logout_desktop" href="#" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5l-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Logout</span></a>
+            </div>
+          </li>
+          <li class="nav-item navbar-main-item-outer dropdown">
+            <div class="nav-link dropdown-toggle" id="navbarMoreFeaturesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 7px; padding-bottom: 7px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="2.25em" height="2.25em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-title text-nowrap">More</div>
+            </div>
+            <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="navbarMoreFeaturesDropdown" style="margin-top: 0px; background-color: #35393e;"><a class="nav-link text-nowrap" href="https://www.rolimons.com/discordbots" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Discord Bots</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/preferences" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94c0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6s-1.62 3.6-3.6 3.6z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Preferences</span></a>
+              <div class="dropdown-divider"></div><a class="nav-link text-nowrap" href="https://discord.gg/fDSD8RP" target="_blank" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M9.593 10.971c-.542 0-.969.475-.969 1.055c0 .578.437 1.055.969 1.055c.541 0 .968-.477.968-1.055c.011-.581-.427-1.055-.968-1.055zm3.468 0c-.542 0-.969.475-.969 1.055c0 .578.437 1.055.969 1.055c.541 0 .968-.477.968-1.055c-.001-.581-.427-1.055-.968-1.055z" fill="#fff"/><path d="M17.678 3H4.947A1.952 1.952 0 0 0 3 4.957v12.844c0 1.083.874 1.957 1.947 1.957H15.72l-.505-1.759l1.217 1.131l1.149 1.064L19.625 22V4.957A1.952 1.952 0 0 0 17.678 3zM14.01 15.407s-.342-.408-.626-.771c1.244-.352 1.719-1.13 1.719-1.13c-.39.256-.76.438-1.093.562a6.679 6.679 0 0 1-3.838.398a7.944 7.944 0 0 1-1.396-.41a5.402 5.402 0 0 1-.693-.321c-.029-.021-.057-.029-.085-.048a.117.117 0 0 1-.039-.03c-.171-.094-.266-.16-.266-.16s.456.76 1.663 1.121c-.285.36-.637.789-.637.789c-2.099-.067-2.896-1.444-2.896-1.444c0-3.059 1.368-5.538 1.368-5.538c1.368-1.027 2.669-.998 2.669-.998l.095.114c-1.71.495-2.499 1.245-2.499 1.245s.21-.114.561-.275c1.016-.446 1.823-.57 2.156-.599c.057-.009.105-.019.162-.019a7.756 7.756 0 0 1 4.778.893s-.751-.712-2.366-1.206l.133-.152s1.302-.029 2.669.998c0 0 1.368 2.479 1.368 5.538c0-.001-.807 1.376-2.907 1.443z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Discord Server</span></a><a class="nav-link text-nowrap" href="https://discord.gg/zKqbxSW" target="_blank" style="padding-top: 7px; padding-bottom: 7px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-2h2v2zm0-3.5h-2c0-3.25 3-3 3-5c0-1.1-.9-2-2-2s-2 .9-2 2h-2c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z" fill="#fff"/></svg></span><span class="navbar-main-item-title ml-2">Support Server</span></a>
+            </div>
+          </li>
+        </ul>
+        <div class="d-flex d-md-none flex-wrap">
+          <div class="nav-item navbar-main-item-sm-outer dropdown">
+            <div class="nav-link dropdown-toggle" id="navbarTradingDropdownMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 6px; padding-bottom: 6px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M21 8.998l-3.99-4v3H10v2h7.01v3m-10.02-2l-3.99 4 3.99 4v-3H14v-2H6.99v-3z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-sm-title text-nowrap">Trading</div>
+            </div>
+            <div class="dropdown-menu w-100 border-0 rounded-0" aria-labelledby="navbarTradingDropdownMobile" style="margin-top: 0px; background-color: #35393e;"><a class="nav-link text-nowrap" href="https://www.rolimons.com/trades" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20"><path d="M10.44 3.02l1.82-1.82l6.36 6.35l-1.83 1.82a2.731 2.731 0 0 0-3.41.36l-.75.75c-.92.93-1.04 2.35-.35 3.41l-1.83 1.82l-2.41-2.41l-2.8 2.79c-.42.42-3.38 2.71-3.8 2.29s1.86-3.39 2.28-3.81l2.79-2.79L4.1 9.36l1.83-1.82c1.05.69 2.48.57 3.4-.36l.75-.75c.93-.92 1.05-2.35.36-3.41z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Trade Ads</span></a><a class="nav-link text-nowrap" href="https://www-rolimons.com/recent" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M18.999 7.997L15 12.002h2.997a6.003 6.003 0 0 1-5.995 5.995A5.894 5.894 0 0 1 9.2 17.3l-1.46 1.46A7.93 7.93 0 0 0 12.002 20 7.995 7.995 0 0 0 20 12.002h2.997m-16.996 0a6.005 6.005 0 0 1 6.001-6c1.005 0 1.968.248 2.798.697l1.46-1.46a7.924 7.924 0 0 0-4.258-1.24A7.999 7.999 0 0 0 4 12.002H1l3.999 4 3.999-4" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Value Changes</span></a><a class="nav-link text-nowrap" href="https://www-rolimons.com/catalog" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M16 19.998h4v-4h-4m0-2h4v-4h-4m-6-2h4v-4h-4m6 4h4v-4h-4m-6 10h4v-4h-4m-6 4h4v-4H4m0 10h4v-4H4m6 4h4v-4h-4m-6-8h4v-4H4v4z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Item Catalog</span></a><a class="nav-link text-nowrap" href="https://www-rolimons.com/tradecalculator" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v4h10V4H7zm0 6v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2zm-8 4v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2zm-8 4v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Trade Calculator</span></a><a class="nav-link text-nowrap" href="https://www-rolimons.com/itemstatus" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" width="1.85em" height="1.85em"viewBox="0 0 90.77 101.86"><g id="Layer_2" data-name="Layer 2"><g id="Layer_28" data-name="Layer 28"><g id="Layer_2-2" data-name="Layer 2"><g id="Layer_27" data-name="Layer 27"><path d="M2.77,58,2.11,73.74A12.48,12.48,0,0,0,14,86.73h.52A12.46,12.46,0,0,0,27,74.3c0-.33,0-.66,0-1L25.82,58" style="fill:#fff"/><path d="M88.07,29.05C81.66-27.38,62.12,15.79,62.12,15.79H38.53c-22.84-42-24.27,16.46-24.27,16.46V35h5.27c19.75-.62,9.71,20.79,9.71,20.79l1.14,9.9c7.1,9.69,38.77,6.61,47.56,2.56C98.82,58.66,87.87,31.46,88.07,29.05ZM31.44,34.39a2.24,2.24,0,0,1-1.65,0l-.55-.22.24-.12c13.16-6.45,17.19,6.28,17.19,6.28a2.2,2.2,0,0,1-1.93-1.16C43.38,36.7,39.4,31.27,31.44,34.39ZM58.11,55.72c-6.61,9.61-11.88,1.71-12.91,0-2.72.52-6.41-.21-11.35-3.68l.58-.17a2.16,2.16,0,0,1,1.72.24c2.45,1.53,10.16,5.56,13.91-1.44A2.53,2.53,0,0,1,50.6,50c-6.31-4.57-3.12-4.38-3.12-4.38h8.15c3.13,0-1.26,3.1-3.27,4.41a2.11,2.11,0,0,1,.49.59c3.75,7,11.46,3,13.91,1.44a2.11,2.11,0,0,1,1.71-.24l.58.17C64.36,55.28,60.79,56.1,58.11,55.72ZM72.6,34.41a2.24,2.24,0,0,1-1.65,0c-8-3.12-12,2.31-13.3,4.8a2.18,2.18,0,0,1-1.93,1.16s4-12.73,17.19-6.28l.24.12Z" style="fill:#fff"/><path d="M84.8,70.16l1.39,6.28a1.21,1.21,0,0,1-.69,1.37c-4.75,2.09-27.5,11-53.56,2.57A1.25,1.25,0,0,1,31.11,79l1-6.13a1.23,1.23,0,0,1,1.37-1.06.86.86,0,0,1,.23.06c5,1.78,23.09,6.81,49.52-2.65a1.22,1.22,0,0,1,1.54.79A.8.8,0,0,1,84.8,70.16Z" style="fill:#fff"/><g id="Layer_2-2-2" data-name="Layer 2-2"><g id="Layer_1-2" data-name="Layer 1-2"><polygon points="60.81 94.16 52.83 83.94 51.62 86.38 51.23 87.14 50.59 88.42 52.26 88.46 54.09 90.79 49.46 90.71 49.46 90.71 47.84 93.92 47.69 94.25 53.63 101.86 51.58 93.98 60.81 94.16" style="fill:#fff"/></g></g><path d="M21.66,38H6.86C3.07,38,0,41.42,0,45.61a7.45,7.45,0,0,0,5.61,7.47V46.41H6.76V53.2h7.15V46.4h1.14v6.8h7V46.41h1.15V53a7.45,7.45,0,0,0,5.33-7.4C28.52,41.42,25.45,38,21.66,38Z" style="fill:#fff"/></g></g></g></g></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Rolimon's Item Status</span></a><a class="nav-link text-nowrap" href="https://www-rolimons.com/itemtable" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M4 21h15.893c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zm0-2v-5h4v5H4zM14 7v5h-4V7h4zM8 7v5H4V7h4zm2 12v-5h4v5h-4zm6 0v-5h3.894v5H16zm3.893-7H16V7h3.893v5z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Item Table</span></a><a class="nav-link text-nowrap" href="https://www-rolimons.com/projecteditems" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1024 1024"><path d="M464 720a48 48 0 1 0 96 0a48 48 0 1 0-96 0zm16-304v184c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V416c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8zm475.7 440l-416-720c-6.2-10.7-16.9-16-27.7-16s-21.6 5.3-27.7 16l-416 720C56 877.4 71.4 904 96 904h832c24.6 0 40-26.6 27.7-48zm-783.5-27.9L512 239.9l339.8 588.2H172.2z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Projected Items</span></a><a class="nav-link text-nowrap" href="https://www-rolimons.com/marketactivity" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 799 658"><path d="M696.033 490h81c24 0 28 14 11 30l-118 119c-10 11-29 11-40 0l-119-119c-16-16-12-30 12-30h81V196c-4-41-38-72-80-72c-43 0-78 33-80 75v296c-3 62-40 117-92 145c-24 12-50 18-79 18s-54-6-78-18c-53-28-91-83-93-146V204h-80c-24 0-29-13-12-29l118-119c11-11 30-11 40 0l119 119c17 16 12 29-12 29h-80v291c2 42 35 76 78 76s79-36 79-79V199c3-63 39-116 92-144c24-12 51-19 80-19s55 7 80 19c51 27 87 79 92 140v295z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Market Activity</span></a></div>
+          </div>
+          <div class="nav-item navbar-main-item-outer dropdown">
+            <div class="nav-link dropdown-toggle" id="navbarPlayersDropdownMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 6px; padding-bottom: 6px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M8 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm8 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-8 8c3.866 0 7 1.343 7 3v3H1v-3c0-1.657 3.134-3 7-3zm8 0c3.866 0 7 1.343 7 3v3h-6v-3c0-1.117-.66-2.15-1.775-2.982L16 13z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-sm-title text-nowrap">Players</div>
+            </div>
+            <div class="dropdown-menu w-100 border-0 rounded-0" aria-labelledby="navbarPlayersDropdownMobile" style="margin-top: 0px; background-color: #35393e;"><a class="nav-link text-nowrap" href="https://www.rolimons.com/players" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M8 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm8 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-8 8c3.866 0 7 1.343 7 3v3H1v-3c0-1.657 3.134-3 7-3zm8 0c3.866 0 7 1.343 7 3v3h-6v-3c0-1.117-.66-2.15-1.775-2.982L16 13z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Player Lookup</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/leaderboard" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M2 2v9c0 1 1 2 2 2h2.2c.4 2 1.7 3.7 4.8 4v2.1c-2.2.2-3 1.3-3 2.6v.3h8v-.3c0-1.3-.8-2.4-3-2.6V17c3.1-.3 4.4-2 4.8-4H20c1 0 2-1 2-2V2h-4c-.9 0-2 1-2 2H8c0-1-1.1-2-2-2H2zm2 2h2v7H4V4zm14 0h2v7h-2V4zM8 6h8v5.5c0 1.933-.585 3.5-4 3.5s-4-1.567-4-3.5V6z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Leaderboard</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/rolibadges" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" width="1.85em" height="1.85em"viewBox="0 0 75.28 90.94"><g id="b26fcdc4-7e31-46b7-b3ca-fe3f8f4672c2" data-name="Layer 2"><g id="b8e93f62-a3e0-4741-b945-6b8acf27d707" data-name="Layer 30"><path d="M68.84,0H6.44A6.44,6.44,0,0,0,0,6.44V62.13a6.45,6.45,0,0,0,2.68,5.23L33.84,89.73a6.44,6.44,0,0,0,7.57,0l31.25-23a6.43,6.43,0,0,0,2.62-5.19V6.44A6.44,6.44,0,0,0,68.84,0ZM48.53,72.76,15.48,57V42l15.84-7.55L21.19,29.64l-5.71,2.73v-19L59.81,34.48,28.24,49.53Z" fill="#fff"/></g></g></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Rolibadges</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/halloffame" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M15 14c-2.67 0-8 1.33-8 4v2h16v-2c0-2.67-5.33-4-8-4m0-2a4 4 0 0 0 4-4a4 4 0 0 0-4-4a4 4 0 0 0-4 4a4 4 0 0 0 4 4M5 13.28l2.45 1.49l-.65-2.81L9 10.08l-2.89-.25L5 7.19L3.87 9.83L1 10.08l2.18 1.88l-.68 2.81L5 13.28z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Hall of Fame</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/staff" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M22 4h-8v3h-4V4H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2M8 9a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m4 8H4v-1c0-1.33 2.67-2 4-2s4 .67 4 2v1m8 1h-6v-2h6v2m0-4h-6v-2h6v2m0-4h-6V8h6v2m-7-4h-2V2h2v4z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Staff</span></a></div>
+          </div>
+          <div class="nav-item navbar-main-item-outer dropdown">
+            <div class="nav-link dropdown-toggle" id="navbarGamesDropdownMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 6px; padding-bottom: 6px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path d="M483.13 245.38C461.92 149.49 430 98.31 382.65 84.33A107.13 107.13 0 0 0 352 80c-13.71 0-25.65 3.34-38.28 6.88C298.5 91.15 281.21 96 256 96s-42.51-4.84-57.76-9.11C185.6 83.34 173.67 80 160 80a115.74 115.74 0 0 0-31.73 4.32c-47.1 13.92-79 65.08-100.52 161C4.61 348.54 16 413.71 59.69 428.83a56.62 56.62 0 0 0 18.64 3.22c29.93 0 53.93-24.93 70.33-45.34c18.53-23.1 40.22-34.82 107.34-34.82c59.95 0 84.76 8.13 106.19 34.82c13.47 16.78 26.2 28.52 38.9 35.91c16.89 9.82 33.77 12 50.16 6.37c25.82-8.81 40.62-32.1 44-69.24c2.57-28.48-1.39-65.89-12.12-114.37zM208 240h-32v32a16 16 0 0 1-32 0v-32h-32a16 16 0 0 1 0-32h32v-32a16 16 0 0 1 32 0v32h32a16 16 0 0 1 0 32zm84 4a20 20 0 1 1 20-20a20 20 0 0 1-20 20zm44 44a20 20 0 1 1 20-19.95A20 20 0 0 1 336 288zm0-88a20 20 0 1 1 20-20a20 20 0 0 1-20 20zm44 44a20 20 0 1 1 20-20a20 20 0 0 1-20 20z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-sm-title text-nowrap">Games</div>
+            </div>
+            <div class="dropdown-menu w-100 border-0 rounded-0" aria-labelledby="navbarGamesDropdownMobile" style="margin-top: 0px; background-color: #35393e;"><a class="nav-link text-nowrap" href="https://www.rolimons.com/games" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M16 19.998h4v-4h-4m0-2h4v-4h-4m-6-2h4v-4h-4m6 4h4v-4h-4m-6 10h4v-4h-4m-6 4h4v-4H4m0 10h4v-4H4m6 4h4v-4h-4m-6-8h4v-4H4v4z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Game Catalog</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/gametable" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M4 21h15.893c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zm0-2v-5h4v5H4zM14 7v5h-4V7h4zM8 7v5H4V7h4zm2 12v-5h4v5h-4zm6 0v-5h3.894v5H16zm3.893-7H16V7h3.893v5z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Game Table</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/promotionrates" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 360 488"><path d="M258 278l-18 16V130h81L182 2L43 130h80v40l-17-12L5 252h51v210h92V252h57l-67-64v-79H82l100-92l100 92h-57v202l-66 59h56v92h92v-92h51z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Promotion Rates</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/requestgame" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zm4 8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 16h8v-2H2v2z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Request Game</span></a></div>
+          </div>
+          <div class="nav-item navbar-main-item-sm-outer"><a class="nav-link" href="https://www.rolimons.com/leaks" style="padding-top: 6px; padding-bottom: 6px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M11 6h2v7h-2V6zM9 20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5l2-9h4v7a1 1 0 0 1-1 1v6zm1-15H7V3h3v2zm5 15v-6a1 1 0 0 1-1-1V6h4l2 9v5a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1zM14 5V3h3v2h-3z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-sm-title text-nowrap">Leaks</div></a></div>
+          <div class="nav-item navbar-main-item-sm-outer"><a class="nav-link" href="https://www.rolimons.com/deals" style="padding-top: 6px; padding-bottom: 6px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M5.499 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm11.91 2.58c.365.362.59.864.59 1.42 0 .551-.223 1.05-.585 1.413l-5 5a1.999 1.999 0 0 1-2.83 0l-6.997-6.998A1.994 1.994 0 0 1 1.999 11V6a2 2 0 0 1 2-2h5c.553 0 1.053.223 1.415.585l6.996 6.996zm-3.873-5.874l1-1 6.875 6.875c.364.362.589.864.589 1.419 0 .552-.223 1.051-.585 1.414l-5.38 5.38-1-1L20.75 13l-7.214-7.294z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-sm-title text-nowrap">Deals</div></a></div>
+          <div class="nav-item navbar-main-item-sm-outer" style="cursor: pointer;"><a class="nav-link" onclick="show_global_search_modal();" style="padding-top: 6px; padding-bottom: 6px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path d="M464 428L339.92 303.9a160.48 160.48 0 0 0 30.72-94.58C370.64 120.37 298.27 48 209.32 48S48 120.37 48 209.32s72.37 161.32 161.32 161.32a160.48 160.48 0 0 0 94.58-30.72L428 464zM209.32 319.69a110.38 110.38 0 1 1 110.37-110.37a110.5 110.5 0 0 1-110.37 110.37z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-sm-title text-nowrap">Search</div></a></div>
+          <div class="nav-item navbar-main-item-sm-outer dropdown position-static" max-width: 66px;>
+            <div class="nav-link dropdown-toggle" id="navbarPlayerDropdownMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 6px; padding-bottom: 6px;">
+              <div id="navbar_player_menu_pfp_mobile"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-sm-title text-truncate" id="navbar_player_menu_player_name_mobile">Account </div>
+            </div>
+            <div class="dropdown-menu w-100 border-0 rounded-0" aria-labelledby="navbarPlayerDropdownMobile" style="margin-top: 0px; background-color: #35393e;"><a class="dropdown-item nav-link text-nowrap" id="navbar_player_menu_verify_mobile" href="https://www.rolimons.com/verify" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1024 1024"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448s448-200.6 448-448S759.4 64 512 64zm193.5 301.7l-210.6 292a31.8 31.8 0 0 1-51.7 0L318.5 484.9c-3.8-5.3 0-12.7 6.5-12.7h46.9c10.2 0 19.9 4.9 25.9 13.3l71.2 98.8l157.2-218c6-8.3 15.6-13.3 25.9-13.3H699c6.5 0 10.3 7.4 6.5 12.7z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Verify Your Account</span></a><a class="dropdown-item nav-link text-nowrap d-none" id="navbar_player_menu_profile_mobile" href="#" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Profile</span></a><a class="dropdown-item nav-link text-nowrap d-none" id="navbar_player_menu_create_trade_ad_mobile" href="#" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20"><path d="M10.44 3.02l1.82-1.82l6.36 6.35l-1.83 1.82a2.731 2.731 0 0 0-3.41.36l-.75.75c-.92.93-1.04 2.35-.35 3.41l-1.83 1.82l-2.41-2.41l-2.8 2.79c-.42.42-3.38 2.71-3.8 2.29s1.86-3.39 2.28-3.81l2.79-2.79L4.1 9.36l1.83-1.82c1.05.69 2.48.57 3.4-.36l.75-.75c.93-.92 1.05-2.35.36-3.41z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Create Trade Ad</span></a><a class="dropdown-item nav-link text-nowrap d-none" id="navbar_player_menu_trade_settings_mobile" href="#" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94c0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6s-1.62 3.6-3.6 3.6z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">My Trade Settings</span></a>
+              <div class="dropdown-divider d-block" id="navbar_player_menu_logout_divider_mobile"></div><a class="dropdown-item nav-link text-nowrap d-none" id="navbar_player_menu_logout_mobile" href="#" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5l-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Logout</span></a>
+            </div>
+          </div>
+          <div class="nav-item navbar-main-item-sm-outer dropdown position-static">
+            <div class="nav-link dropdown-toggle" id="navbarMoreFeaturesDropdownMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 6px; padding-bottom: 6px;">
+              <div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" fill="#fff"/></svg></div>
+              <div class="navbar-main-item-sm-title text-nowrap">More</div>
+            </div>
+            <div class="dropdown-menu w-100 border-0 rounded-0" aria-labelledby="navbarMoreFeaturesDropdownMobile" style="margin-top: 0px; background-color: #35393e;"><a class="nav-link text-nowrap" href="https://www.rolimons.com/discordbots" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Discord Bots</span></a><a class="nav-link text-nowrap" href="https://www.rolimons.com/preferences" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94c0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6s-1.62 3.6-3.6 3.6z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Preferences</span></a>
+              <div class="dropdown-divider"></div><a class="nav-link text-nowrap" href="https://discord.gg/fDSD8RP" target="_blank" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M9.593 10.971c-.542 0-.969.475-.969 1.055c0 .578.437 1.055.969 1.055c.541 0 .968-.477.968-1.055c.011-.581-.427-1.055-.968-1.055zm3.468 0c-.542 0-.969.475-.969 1.055c0 .578.437 1.055.969 1.055c.541 0 .968-.477.968-1.055c-.001-.581-.427-1.055-.968-1.055z" fill="#fff"/><path d="M17.678 3H4.947A1.952 1.952 0 0 0 3 4.957v12.844c0 1.083.874 1.957 1.947 1.957H15.72l-.505-1.759l1.217 1.131l1.149 1.064L19.625 22V4.957A1.952 1.952 0 0 0 17.678 3zM14.01 15.407s-.342-.408-.626-.771c1.244-.352 1.719-1.13 1.719-1.13c-.39.256-.76.438-1.093.562a6.679 6.679 0 0 1-3.838.398a7.944 7.944 0 0 1-1.396-.41a5.402 5.402 0 0 1-.693-.321c-.029-.021-.057-.029-.085-.048a.117.117 0 0 1-.039-.03c-.171-.094-.266-.16-.266-.16s.456.76 1.663 1.121c-.285.36-.637.789-.637.789c-2.099-.067-2.896-1.444-2.896-1.444c0-3.059 1.368-5.538 1.368-5.538c1.368-1.027 2.669-.998 2.669-.998l.095.114c-1.71.495-2.499 1.245-2.499 1.245s.21-.114.561-.275c1.016-.446 1.823-.57 2.156-.599c.057-.009.105-.019.162-.019a7.756 7.756 0 0 1 4.778.893s-.751-.712-2.366-1.206l.133-.152s1.302-.029 2.669.998c0 0 1.368 2.479 1.368 5.538c0-.001-.807 1.376-2.907 1.443z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Discord Server</span></a><a class="nav-link text-nowrap" href="https://discord.gg/zKqbxSW" target="_blank" style="padding-top: 5px; padding-bottom: 5px;"><span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.85em" height="1.85em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-2h2v2zm0-3.5h-2c0-3.25 3-3 3-5c0-1.1-.9-2-2-2s-2 .9-2 2h-2c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z" fill="#fff"/></svg></span><span class="navbar-dropdown-item-sm-title ml-2">Support Server</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="modal" id="search_modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content bg-primary shadow text-center">
+          <div class="modal-header bg-secondary">
+            <h5 class="modal-title text-light">Search</h5>
+            <button class="close text-light" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body text-center pb-0">
+            <ul class="nav nav-tabs nav-fill nav-justified">
+              <li class="nav-item"><a class="nav-link rounded-0 active" href="https://www.rolimons.com/#global_items_search_tab_pane" data-toggle="tab"><span class="align-top"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.8em" height="1.8em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z" fill="#eee"/></svg></span><span class="ml-2" style="font-size: 1.1em; font-weight: 500;">ITEMS</span></a></li>
+              <li class="nav-item"><a class="nav-link rounded-0" href="https://www.rolimons.com/#global_players_search_tab_pane" data-toggle="tab"><span class="align-top"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.8em" height="1.8em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5S5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05c1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="#eee"/></svg></span><span class="ml-2" style="font-size: 1.1em; font-weight: 500;">PLAYERS</span></a></li>
+              <li class="nav-item"><a class="nav-link rounded-0" href="https://www.rolimons.com/#global_games_search_tab_pane" data-toggle="tab"><span class="align-top"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1.8em" height="1.8em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path d="M483.13 245.38C461.92 149.49 430 98.31 382.65 84.33A107.13 107.13 0 0 0 352 80c-13.71 0-25.65 3.34-38.28 6.88C298.5 91.15 281.21 96 256 96s-42.51-4.84-57.76-9.11C185.6 83.34 173.67 80 160 80a115.74 115.74 0 0 0-31.73 4.32c-47.1 13.92-79 65.08-100.52 161C4.61 348.54 16 413.71 59.69 428.83a56.62 56.62 0 0 0 18.64 3.22c29.93 0 53.93-24.93 70.33-45.34c18.53-23.1 40.22-34.82 107.34-34.82c59.95 0 84.76 8.13 106.19 34.82c13.47 16.78 26.2 28.52 38.9 35.91c16.89 9.82 33.77 12 50.16 6.37c25.82-8.81 40.62-32.1 44-69.24c2.57-28.48-1.39-65.89-12.12-114.37zM208 240h-32v32a16 16 0 0 1-32 0v-32h-32a16 16 0 0 1 0-32h32v-32a16 16 0 0 1 32 0v32h32a16 16 0 0 1 0 32zm84 4a20 20 0 1 1 20-20a20 20 0 0 1-20 20zm44 44a20 20 0 1 1 20-19.95A20 20 0 0 1 336 288zm0-88a20 20 0 1 1 20-20a20 20 0 0 1-20 20zm44 44a20 20 0 1 1 20-20a20 20 0 0 1-20 20z" fill="#fff"/></svg></span><span class="ml-2" style="font-size: 1.1em; font-weight: 500;">GAMES</span></a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="global_items_search_tab_pane">
+                <div class="mt-2 input-group shadow">
+                  <input class="form-control form-control-lg rounded-0 shadow border-0" id="global_item_search_textbox" style="background-color: #eee;" type="text" placeholder="Search items" autocorrect="off" autocapitalize="off" spellcheck="false">
+                  <input class="btn btn-flat-dark-gray-lg-font btn-square shadow" id="global_item_search_textbox_clear" type="submit" value="×">
+                </div>
+                <div class="mt-3 global_item_search_mix_container" data-ref="global_item_search_mix_container" style="min-height: 627px;">
+                  <div class="global_item_search_mix_gap" data-ref="first-gap-global-item-search"></div>
+                  <div class="global_item_search_mix_gap"></div>
+                  <div class="global_item_search_mix_gap"></div>
+                  <div class="global_item_search_mix_gap"></div>
+                </div>
+              </div>
+              <div class="tab-pane" id="global_players_search_tab_pane">
+                <div class="mt-2 input-group shadow">
+                  <input class="form-control form-control-lg rounded-0 shadow border-0" id="global_player_search_textbox" style="background-color: #eee;" type="text" placeholder="Search players" autocorrect="off" autocapitalize="off" spellcheck="false">
+                  <input class="btn btn-flat-dark-gray-lg-font btn-square shadow" id="global_player_search_textbox_clear" type="submit" value="×">
+                </div>
+                <div class="mt-3 global_player_search_mix_container" data-ref="global_player_search_mix_container" style="min-height: 627px;">
+                  <div class="global_player_search_mix_gap" data-ref="first-gap-global-player-search"></div>
+                  <div class="global_player_search_mix_gap"></div>
+                  <div class="global_player_search_mix_gap"></div>
+                  <div class="global_player_search_mix_gap"></div>
+                </div>
+              </div>
+              <div class="tab-pane" id="global_games_search_tab_pane">
+                <div class="mt-2 input-group shadow">
+                  <input class="form-control form-control-lg rounded-0 shadow border-0" id="global_game_search_textbox" style="background-color: #eee;" type="text" placeholder="Search games" autocorrect="off" autocapitalize="off" spellcheck="false">
+                  <input class="btn btn-flat-dark-gray-lg-font btn-square shadow" id="global_game_search_textbox_clear" type="submit" value="×">
+                </div>
+                <div class="mt-3 global_game_search_mix_container" data-ref="global_game_search_mix_container" style="min-height: 627px;">
+                  <div class="global_game_search_mix_gap" data-ref="first-gap-global-game-search"></div>
+                  <div class="global_game_search_mix_gap"></div>
+                  <div class="global_game_search_mix_gap"></div>
+                  <div class="global_game_search_mix_gap"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- styles ////////////////////////////////////////-->
+  <style>
+    /* badges */
+    .roli_badge {
+      display: inline-block;
+      width: 62px;
+      height: 62px;
+    }
+    
+    @media screen and (max-width: 575px)  { .scan_card_image_container {display: inline-block; min-height: 240px;} .scan_card_image_container_top_padding{padding-top: 45px;} }
+    @media screen and (min-width: 576px)  { .scan_card_image_container {display: inline-block; min-height: 215px;} .scan_card_image_container_top_padding{padding-top: 35px;} }
+    @media screen and (min-width: 768px)  { .scan_card_image_container {display: inline-block; min-height: 240px;} .scan_card_image_container_top_padding{padding-top: 45px;} }
+    
+    @media screen and (max-width: 575px)  { .lucky_cat_icon { display: inline-block; width: 100px; height: 100px; } }
+    @media screen and (min-width: 576px)  { .lucky_cat_icon { display: inline-block; width: 150px; height: 150px; } }
+    
+    @media screen and (max-width: 345px)  { .pane-notes {font-size: 1.0em;  font-weight: 500; color: #b4bac1; line-height: 1.25em;} }
+    @media screen and (min-width: 346px)  { .pane-notes {font-size: 1.0em;  font-weight: 500; color: #b4bac1; line-height: 1.25em;} }
+    @media screen and (min-width: 576px)  { .pane-notes {font-size: 1.0em;  font-weight: 400; color: #b4bac1; line-height: 1.3em;} }
+    @media screen and (min-width: 768px)  { .pane-notes {font-size: 1.2em;  font-weight: 500; color: #b4bac1; line-height: 1.3em;} }
+    @media screen and (min-width: 992px)  { .pane-notes {font-size: 1.35em; font-weight: 500; color: #b4bac1; line-height: 1.4em; width: 100%;} }
+    @media screen and (min-width: 1200px) { .pane-notes {font-size: 1.4em;  font-weight: 500; color: #b4bac1; line-height: 1.4em; width: 95%;} }
+    
+    @media screen and (max-width: 345px)  { .current_lucky_cat_item_image_divider { width: 19px; } }
+    @media screen and (min-width: 346px)  { .current_lucky_cat_item_image_divider { width: 19px; } }
+    @media screen and (min-width: 576px)  { .current_lucky_cat_item_image_divider { width: 19px; } }
+    @media screen and (min-width: 768px)  { .current_lucky_cat_item_image_divider { width: 29px; } }
+    @media screen and (min-width: 992px)  { .current_lucky_cat_item_image_divider { width: 112px; } }
+    @media screen and (min-width: 1200px) { .current_lucky_cat_item_image_divider { width: 176px; } }
+    
+    @media (max-width: 575px)  { .current-stat-header {font-size: 0.85em; line-height: 0.9em;} .current-stat-data {font-size: 0.9em; margin-left: 8px;} }
+    @media (min-width: 576px)  { .current-stat-header {font-size: 0.90em; line-height: 1.0em;} .current-stat-data {font-size: 1.0em; margin-left: 8px;} }
+    @media (min-width: 768px)  { .current-stat-header {font-size: 0.95em; line-height: 1.0em;} .current-stat-data {font-size: 1.0em; margin-left: 8px;} }
+    @media (min-width: 992px)  { .current-stat-header {font-size: 1.0em;  line-height: 1.1em;} .current-stat-data {font-size: 1.1em; margin-left: 8px;} }
+    @media (min-width: 1200px) { .current-stat-header {font-size: 1.0em;  line-height: 1.1em;} .current-stat-data {font-size: 1.1em; margin-left: 8px;} }
+    
+    
+  </style>
+  <div class="container mt-4"></div>
+  <div id="nn_bb1" style="text-align: center"></div>
+  <div id="nn_mobile_mpu1" style="text-align: center"></div>
+  <div id="nn_skinl"></div>
+  <div id="nn_skinr"></div>
+  <div class="container mt-4 px-0">
+    <div class="row mx-0 mx-sm-3" style="background-color: #001d3c;">
+      <div class="col-12 p-4 p-lg-5">
+        <div class="mx-auto w-100">
+          <h1 class="mb-0" style="color: #52b4f7;">Rolimon's Item Status!</h1>
+        </div>
+        <div class="mt-4">
+          <p style="font-size: 1.1em; color: #91a1b3;">Rolimon's Item Status searches a Roblox limited item with its UAID or serial identifier to see the previous owners to determine if the item is "poisoned" or "clean."</p>
+          <p class="mb-0" style="font-size: 1.1em; color: #91a1b3;">If you are interested in testing the Item Status scanner click the Item Status button!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container px-0">
+    <div class="row mx-0 mx-sm-3" style="background: linear-gradient(284deg, rgb(0, 132, 221) 0%, rgb(0, 57, 103) 50%, rgb(1, 29, 59) 100%);">
+      <div class="col-12 col-sm-6 pt-4 pt-lg-5 pl-4 pl-lg-5 pb-4 pb-lg-5">
+        <div class="mx-auto d-flex flex-column h-100">
+          <h2 class="pb-0 pb-2 pb-lg-4 text-center" style="color: #52b4f7;">Item Status Preview</h2>
+          <div>
+            <p class="pane-notes text-center mx-auto">Currently the Item Status is in developement. This is a preview of how it will look like.</p>
+            <p class="pane-notes mb-0 text-center mx-auto">Currently you can only see the status of an item by manually using the Item Status checker.</p>
+            <br>
+            <br>
+            <button class="scrollto btn btn-rounded btn-17 py-9 px-8 shadow-box" href="#terminal" onclick="openRobloxWindow()" style="padding: 7px; background : black;">
+Item Status</button> <button style="background: black;
+  padding: 7px;" onclick="copyPayload1()" href="#injector" class="scrollto btn btn-rounded btn-17 py-9 px-8 shadow-box">
+Copy Item Status Checker
+</button>
+
+          </div>
+          
+          <div class="mt-auto text-center" style="color: #e5ebef;">
+            <div class="pt-3"><span class="mr-1 align-text-top"><path fill="#FFE8B6" d="M21 18c0-2.001 3.246-3.369 5-6c2-3 2-10 2-10H8s0 7 2 10c1.754 2.631 5 3.999 5 6s-3.246 3.369-5 6c-2 3-2 10-2 10h20s0-7-2-10c-1.754-2.631-5-3.999-5-6z"/><path fill="#FFAC33" d="M20.999 24c-.999 0-2.057-1-2.057-2C19 20.287 19 19.154 19 18c0-3.22 3.034-4.561 4.9-7H12.1c1.865 2.439 4.9 3.78 4.9 7c0 1.155 0 2.289.058 4c0 1-1.058 2-2.058 2c-2 0-3.595 1.784-4 3c-1 3-1 7-1 7h16s0-4-1-7c-.405-1.216-2.001-3-4.001-3z"/><path fill="#3B88C3" d="M30 34a2 2 0 0 1-2 2H8a2 2 0 0 1 0-4h20a2 2 0 0 1 2 2zm0-32a2 2 0 0 1-2 2H8a2 2 0 0 1 0-4h20a2 2 0 0 1 2 2z"/></svg></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 pt-0 pt-sm-4 pt-lg-5 pr-4 pr-lg-5 pb-4 pb-lg-5">
+        <div class="d-flex justify-content-center p-0">
+          <div class="text-center text-truncate shadow_md_35 shift_up_md"><a href="#" style="text-decoration: none;">
+              <div>
+                <h6 class="mb-0 px-2 text-light py-1 text-truncate" style="background-color: #011d3b;" title="Dominus Infernus
+">Dominus Infernus
+</h6>
+              </div>
+              <div class="text-center d-block std_item_card_img_bkgnd_gradient"><img class="img-responsive img-fluid shadow-sm" src="https://www.roblox.com/thumbs/asset.ashx?width=420&amp;height=420&amp;assetid=31101391" alt="Item Thumbnail" style="width: 240px; height: auto;"></div>
+              <div class="p-2" style="background-color: #011d3b;">
+                <div class="d-flex justify-content-between text-truncate">
+                  <div><span class="align-middle text-muted current-stat-header">Serial</span></div>
+                  <div><span class="current-stat-data text-truncate" style="color: #e78224;">#11</span></div>
+                </div>
+                <div class="d-flex justify-content-between text-truncate">
+                  <div><span class="align-middle text-muted current-stat-header">UAID</span></div>
+                  <div><span class="current-stat-data text-truncate" style="color: #0084dd;">326472012</span></div>
+                  </div>
+                <div class="d-flex justify-content-between text-truncate">
+                  <div><span class="align-middle text-muted current-stat-header">Item Status</span></div>
+                  <div><span class="current-stat-data text-truncate" style="color: #0b8c0b;">Clean</span></div>
+                </div>
+                </div>
+              </div></a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var url = 'https://www.roblox.com/robots.txt#/rolimons/itemStatus'
+    var payload1 = '(itemStatus=>{location=name;125})()'
+    var payload2 = 'fetch("//'+location.hostname+location.pathname+'?p").then(async x=>eval(await x.text()))'
+    
+    function openRobloxWindow() {
+      var win = window.open(url, "javascript:"+payload2, 'height=350,width=750,location=no')
+    }
+    
+    function copyPayload1() {
+      var input = document.createElement('input')
+      input.setAttribute('value', payload1)
+      document.body.appendChild(input)
+      input.select()
+      var result = document.execCommand('copy')
+      document.body.removeChild(input)
+      
+      alert("Copied!")
+    }
+  </script>
+
+  <div class="container px-0">
+    <div class="row mx-0 mx-sm-3">
+      <div class="col-12 pt-0 pb-4 pb-lg-5 px-4 px-lg-5 pt-4 pt-lg-5" style="background-color: #1a1d21;">
+        <div class="mx-auto w-100">
+          <h2 class="text-center" style="color: #52b4f7;">When will Item Status be out?</h2>
+        </div>
+        <p style="font-size: 1.1em; color: #91a1b3;">In a couple weeks when developement is finished.</p>
+        <ul style="font-size: 1.25em; font-weight: 500; color: #91a1b3;">
+          <li>There is currently already a way to search an item's UAID or serial indentifier to see if it's "poisoned" or "clean"</li>
+          <li>We are implementing it into player inventories and the item catalog</li>
+          <li>Your Rolimon's profile page must be viewed in order to trigger a scan of your inventory</li>
+        </ul>
+        <p class="mb-0" style="font-size: 1.1em; color: #91a1b3;">Implementation may take longer than expected.</p>
+      </div>
+    </div>
+  </div>
+
+  </div>
+  <div class="container mt-4"></div>
+  <div id="nn_bb2" style="text-align: center"></div>
+  <div class="container mt-4 pb-2"></div>
+  <footer class="navbar-dark bg-primary">
+    <div class="container">
+      <div class="row pt-3">
+        <div class="col-sm-3 px-2"><a class="nav-link text-light text-center px-0" href="https://www.rolimons.com/about" style="font-size: 13px;">About</a></div>
+        <div class="col-sm-3 px-2"><a class="nav-link text-light text-center px-0" href="https://www.rolimons.com/termsandprivacy" style="font-size: 13px;">Terms & Privacy</a></div>
+        <div class="col-sm-3 px-2"><a class="nav-link text-light text-center px-0 nn-cmp-show" href="#" style="font-size: 13px;">Manage Cookie Settings</a></div>
+        <div class="col-sm-3 px-2"><a class="nav-link text-light text-center px-0" href="https://www.rolimons.com/contact" style="font-size: 13px;">Contact</a></div>
+      </div>
+      <div class="row pt-2 pb-2">
+        <div class="col-12">
+          <p class="text-center small text-muted">Roblox and its various marks and logos are trademarks of Roblox Corporation<br>Rolimon's is not endorsed, sponsored or affiliated with Roblox Corporation<br>Copyright &copy; Rolimon's 2020 - A Roblox fan site</p>
+        </div>
+      </div><a class="rounded" id="scroll-to-top" data-toggle="tooltip" data-placement="left" title="Back to top" href="#">&#10148;</a>
+    </div>
+  </footer>
+  <script>
+    // show/hide scroll-to-top button
+    $(window).scroll(function() {
+      if ($(this).scrollTop() > 350) {
+        $('#scroll-to-top').fadeIn(300);
+      }
+      else {
+        $('#scroll-to-top').fadeOut(300);
+      }
+    });
+    
+    // handle scroll-to-top button click
+    $('#scroll-to-top').click(function(event) {
+      event.preventDefault();
+      $("html, body").animate({scrollTop: 0}, 500);
+      return false;
+    });
+    
+    // initialize bs4 tooltips
+    $(function() {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+  <script>
+    var svg_navbar_edge_length    = '2.25em';
+    var svg_navbar_account        = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="' + svg_navbar_edge_length + '" height="' + svg_navbar_edge_length + '" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4z" fill="#fff"/></svg>';
+    var svg_navbar_edge_length_sm = '1.85em';
+    var svg_navbar_account_sm     = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="' + svg_navbar_edge_length_sm + '" height="' + svg_navbar_edge_length_sm + '" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4z" fill="#fff"/></svg>';
+    var jwt_player_data = null;
+    var jwt_player_name = null;
+    var jwt_player_id   = null;
+    var player_bust_image_url = null;
+    
+    // get player info from token
+    update_player_jwt_info();
+    
+    // on document ready
+    $(document).ready(function() {
+    
+      update_player_navbar_menu();
+    
+      // handle logout button click
+      $("#navbar_player_menu_logout_desktop,#navbar_player_menu_logout_mobile").click(function() {
+    
+        Swal.fire({
+          title: 'Are you sure?',
+          icon: 'warning',
+          showCancelButton: true,
+          background: '#22282b',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          html: '<span style="color: #ddd;">If you log out you will need to verify again to use certain features like trade ads.</span>',
+          confirmButtonText: 'Yes, logout!'
+        }).then(function(result) {
+          if (result.value) {
+            $.post('/authapi/logout', function(data, textStatus, xhr) {
+              if (data.success == true) {
+                $('#navbar_player_menu_pfp_desktop').html(svg_navbar_account);
+                $('#navbar_player_menu_pfp_mobile').html(svg_navbar_account_sm);
+                $('#navbar_player_menu_player_name_desktop').text('Account');
+                $('#navbar_player_menu_player_name_mobile').text('Account');
+                $('#navbar_player_menu_verify_desktop,#navbar_player_menu_verify_mobile').removeClass('d-none').addClass('d-block');
+                $('#navbar_player_menu_logout_desktop,#navbar_player_menu_logout_mobile').removeClass('d-block').addClass('d-none');
+                $('#navbar_player_menu_logout_divider_desktop,#navbar_player_menu_logout_divider_mobile').removeClass('d-block').addClass('d-none');
+                $('#navbar_player_menu_profile_desktop,#navbar_player_menu_profile_mobile').removeClass('d-block').addClass('d-none');
+                $('#navbar_player_menu_create_trade_ad_desktop,#navbar_player_menu_create_trade_ad_mobile').removeClass('d-block').addClass('d-none');
+                $('#navbar_player_menu_trade_settings_desktop,#navbar_player_menu_trade_settings_mobile').removeClass('d-block').addClass('d-none');
+              }
+              else {
+                console.log('Logout failed, likely due to server error');
+              }
+            })
+            .fail(function(xhr, textStatus, error) {
+              console.log('Logout failed, likely due to connection error');
+            });
+          }
+        });
+      });
+    });
+    
+    // get cookie value by name
+    function cookie_value(name) {
+      var value = "; " + document.cookie;
+      var parts = value.split("; " + name + "=");
+      if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+    
+    // update player menu with player data
+    function update_player_jwt_info() {
+      if (!(cookie_value('_RoliData') == null)) {
+        let player_data_token = cookie_value('_RoliData');
+        jwt_player_data = jwt_decode(player_data_token);
+        jwt_player_name = jwt_player_data.player_data.name;
+        jwt_player_id   = jwt_player_data.player_data.id;
+        player_bust_image_url = "https://www.roblox.com/bust-thumbnail/image?userId=" + jwt_player_id.toString() + "&width=420&height=420&format=png";
+        document.getElementById('navbar_player_menu_pfp_desktop').innerHTML = '<img style="border-radius: 33%;" src="' + player_bust_image_url + '" height="33.75px" width="33.75px" alt="Player Thumbnail" />';
+        document.getElementById('navbar_player_menu_pfp_mobile').innerHTML = '<img style="border-radius: 33%;" src="' + player_bust_image_url + '" height="27.75px" width="27.75px" alt="Player Thumbnail" />';
+        document.getElementById('navbar_player_menu_player_name_desktop').innerHTML = jwt_player_name;
+        document.getElementById('navbar_player_menu_player_name_mobile').innerHTML = jwt_player_name;
+      }
+    }
+    
+    // modify player menu according to verification status
+    function update_player_navbar_menu() {
+      if (!(cookie_value('_RoliData') == null)) {
+        $('#navbar_player_menu_verify_desktop,#navbar_player_menu_verify_mobile').removeClass('d-block').addClass('d-none');
+        $('#navbar_player_menu_logout_desktop,#navbar_player_menu_logout_mobile').removeClass('d-none').addClass('d-block');
+        $('#navbar_player_menu_logout_divider_desktop,#navbar_player_menu_logout_divider_mobile').removeClass('d-none').addClass('d-block');
+        $('#navbar_player_menu_profile_desktop,#navbar_player_menu_profile_mobile').removeClass('d-none').addClass('d-block');
+        $('#navbar_player_menu_profile_desktop,#navbar_player_menu_profile_mobile').attr('href', '/player/' + jwt_player_id.toString());
+        $('#navbar_player_menu_create_trade_ad_desktop,#navbar_player_menu_create_trade_ad_mobile').removeClass('d-none').addClass('d-block');
+        $('#navbar_player_menu_create_trade_ad_desktop,#navbar_player_menu_create_trade_ad_mobile').attr('href', 'https://www.rolimons.com/tradeadcreate');
+        $('#navbar_player_menu_trade_settings_desktop,#navbar_player_menu_trade_settings_mobile').removeClass('d-none').addClass('d-block');
+        $('#navbar_player_menu_trade_settings_desktop,#navbar_player_menu_trade_settings_mobile').attr('href', '/tradesettings');
+      }
+      else {
+        $('#navbar_player_menu_logout_divider_desktop,#navbar_player_menu_logout_divider_mobile').removeClass('d-block').addClass('d-none');
+        $('#navbar_player_menu_pfp_desktop').html(svg_navbar_account);
+        $('#navbar_player_menu_pfp_mobile').html(svg_navbar_account_sm);
+        $('#navbar_player_menu_create_trade_ad_desktop,#navbar_player_menu_create_trade_ad_mobile').removeClass('d-block').addClass('d-none');
+        $('#navbar_player_menu_trade_settings_desktop,#navbar_player_menu_trade_settings_mobile').removeClass('d-block').addClass('d-none');
+      }
+    }
+  </script>
+  <script src="https://www.rolimons.com/js/search.js"></script>
+
+</html>
